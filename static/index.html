@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторная работа 2</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <table class="layout-table">
+        <tr>
+            <td id="header" colspan="2">
+                Сивков Александр Владимирович | P3216 | Вариант: 868492
+            </td>
+        </tr>
+
+        <tr>
+            <td class="content-cell">
+                <canvas id="graphCanvas" width="400" height="400" style="display: block; margin: 0 auto;"></canvas>
+            </td>
+
+            <td class="content-cell">
+                <form id="pointForm">
+                    <div>
+                        <strong>Изменение X (выберите одно или несколько значений):</strong>
+                        <br>
+                        <label><input type="checkbox" name="x-val" value="-4"> -4</label>
+                        <label><input type="checkbox" name="x-val" value="-3"> -3</label>
+                        <label><input type="checkbox" name="x-val" value="-2"> -2</label>
+                        <label><input type="checkbox" name="x-val" value="-1"> -1</label>
+                        <label><input type="checkbox" name="x-val" value="0"> 0</label>
+                        <label><input type="checkbox" name="x-val" value="1"> 1</label>
+                        <label><input type="checkbox" name="x-val" value="2"> 2</label>
+                        <label><input type="checkbox" name="x-val" value="3"> 3</label>
+                        <label><input type="checkbox" name="x-val" value="4"> 4</label>
+                        <div id="x-error" class="error">Выберите хотя бы одно значение X!</div>
+                    </div>
+                    <br>
+
+                    <div>
+                        <strong>Изменение Y (-5 ... 3): (до 15 символов)</strong>
+                        <input type="text" id="y-val" placeholder="Введите Y (от -5 до 3)" autocomplete="off" maxlength="15">
+                        <div id="y-error" class="error">Введите корректное число от -5 до 3(макс. длина 15)!</div>
+                    </div>
+                    <br>
+
+                    <div>
+                        <strong>Изменение R (выберите одно значение):</strong>
+                        <br>
+                        <input type="button" class="r-btn" value="1" onclick="setR(1, this)">
+                        <input type="button" class="r-btn" value="2" onclick="setR(2, this)">
+                        <input type="button" class="r-btn" value="3" onclick="setR(3, this)">
+                        <input type="button" class="r-btn" value="4" onclick="setR(4, this)">
+                        <input type="button" class="r-btn" value="5" onclick="setR(5, this)">
+                        <div id="r-error" class="error">Выберите значение R!</div>
+                    </div>
+                    <br>
+
+                    <button type="submit" style="width: 90%; margin: 2%;">Проверить точку</button>
+                    <button type="button" id="clearBtn" style="width: 90%; margin: 2%; background-color: #6c757d;">Очистить таблицу</button>
+                </form>
+		<div style="margin-bottom: 10px; font-weight: bold;">
+			Бэкенд: <span id="serverStatus" style="color: gray;">Проверка...</span>
+		</div>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2" class="content-cell">
+                <table class="results-table" id="resultsTable">
+                    <thead>
+                        <tr>
+                            <th>X</th>
+                            <th>Y</th>
+                            <th>R</th>
+                            <th>Результат</th>
+                            <th>Время (местное)</th>
+                            <th>Время выполнения</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-body">
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <script src="js/script.js"></script>
+</body>
+</html>
