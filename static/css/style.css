@@ -77,3 +77,6 @@ input[type="checkbox"] {
     margin-left: 2%;
     display: none;
 }
+
+.x-btn:hover { background-color: #ddd; }
+.x-btn.active { background-color: #007bff; color: white; }

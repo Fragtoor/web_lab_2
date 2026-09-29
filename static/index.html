@@ -22,37 +22,38 @@
             <td class="content-cell">
                 <form id="pointForm">
                     <div>
-                        <strong>Изменение X (выберите одно или несколько значений):</strong>
+                        <strong>Изменение X (выберите одно значение):</strong>
                         <br>
-                        <label><input type="checkbox" name="x-val" value="-4"> -4</label>
-                        <label><input type="checkbox" name="x-val" value="-3"> -3</label>
-                        <label><input type="checkbox" name="x-val" value="-2"> -2</label>
-                        <label><input type="checkbox" name="x-val" value="-1"> -1</label>
-                        <label><input type="checkbox" name="x-val" value="0"> 0</label>
-                        <label><input type="checkbox" name="x-val" value="1"> 1</label>
-                        <label><input type="checkbox" name="x-val" value="2"> 2</label>
-                        <label><input type="checkbox" name="x-val" value="3"> 3</label>
-                        <label><input type="checkbox" name="x-val" value="4"> 4</label>
-                        <div id="x-error" class="error">Выберите хотя бы одно значение X!</div>
+                        <input type="button" class="x-btn" name="x-val" value="-4" onclick="setX(-4, this)">
+                        <input type="button" class="x-btn" name="x-val" value="-3" onclick="setX(-3, this)">
+                        <input type="button" class="x-btn" name="x-val" value="-2" onclick="setX(-2, this)">
+                        <input type="button" class="x-btn" name="x-val" value="-1" onclick="setX(-1, this)">
+                        <input type="button" class="x-btn" name="x-val" value="0" onclick="setX(0, this)">
+                        <input type="button" class="x-btn" name="x-val" value="1" onclick="setX(1, this)">
+                        <input type="button" class="x-btn" name="x-val" value="2" onclick="setX(2, this)">
+                        <input type="button" class="x-btn" name="x-val" value="3" onclick="setX(3, this)">
+                        <input type="button" class="x-btn" name="x-val" value="4" onclick="setX(4, this)">
+                        <div id="x-error" class="error">Выберите значение X!</div>
                     </div>
                     <br>
 
                     <div>
-                        <strong>Изменение Y (-5 ... 3): (до 15 символов)</strong>
-                        <input type="text" id="y-val" placeholder="Введите Y (от -5 до 3)" autocomplete="off" maxlength="15">
-                        <div id="y-error" class="error">Введите корректное число от -5 до 3(макс. длина 15)!</div>
+                        <strong>Изменение Y (-3 ... 3):</strong>
+                        <br>
+                        <input type="text" id="y-val" placeholder="Введите Y (от -3 до 3)" autocomplete="off" maxlength="15">
+                        <div id="y-error" class="error">Введите корректное число от -3 до 3!</div>
                     </div>
                     <br>
 
                     <div>
-                        <strong>Изменение R (выберите одно значение):</strong>
+                        <strong>Изменение R (выберите одно или несколько):</strong>
                         <br>
-                        <input type="button" class="r-btn" value="1" onclick="setR(1, this)">
-                        <input type="button" class="r-btn" value="2" onclick="setR(2, this)">
-                        <input type="button" class="r-btn" value="3" onclick="setR(3, this)">
-                        <input type="button" class="r-btn" value="4" onclick="setR(4, this)">
-                        <input type="button" class="r-btn" value="5" onclick="setR(5, this)">
-                        <div id="r-error" class="error">Выберите значение R!</div>
+                        <label><input type="checkbox" name="r-val" value="1"> 1</label>
+                        <label><input type="checkbox" name="r-val" value="1.5"> 1.5</label>
+                        <label><input type="checkbox" name="r-val" value="2"> 2</label>
+                        <label><input type="checkbox" name="r-val" value="2.5"> 2.5</label>
+                        <label><input type="checkbox" name="r-val" value="3"> 3</label>
+                        <div id="r-error" class="error">Выберите хотя бы одно значение R!</div>
                     </div>
                     <br>
 
