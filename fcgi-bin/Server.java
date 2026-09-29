@@ -36,7 +36,9 @@ public class Server {
                     continue;
                 }
 
-                double x = 0, y = 0, r = 0;
+                double x = 0;
+                double y = 0;
+                List<Double> radii = new ArrayList<>();
 
                 if (queryString != null) {
                     String[] pairs = queryString.split("&");
@@ -44,27 +46,43 @@ public class Server {
                         String[] keyValue = pair.split("=");
                         if (keyValue.length == 2) {
                             try {
-                                double val = Double.parseDouble(keyValue[1]);
-                                if ("x".equals(keyValue[0])) x = val;
-                                else if ("y".equals(keyValue[0])) y = val;
-                                else if ("r".equals(keyValue[0])) r = val;
+                                String value = java.net.URLDecoder.decode(keyValue[1], "UTF-8");
+
+                                if ("x".equals(keyValue[0])) {
+                                    x = Double.parseDouble(value);
+                                } else if ("y".equals(keyValue[0])) {
+                                    y = Double.parseDouble(value);
+                                } else if ("array".equals(keyValue[0])) {
+                                    value = value.replace("[", "").replace("]", "").trim();
+                                    if (!value.isEmpty()) {
+                                        String[] parts = value.split(",");
+                                        for (String p : parts) {
+                                            radii.add(Double.parseDouble(p.trim()));
+                                        }
+                                    }
+                                }
                             } catch (NumberFormatException ignored) {}
                         }
                     }
                 }
 
-                boolean hit = checkHit(x, y, r);
+                List<Boolean> hits = new ArrayList<>();
+                for (double r: radii) {
+                    hits.add(checkHit(x, y, r));
+                }
 
                 long endTime = System.nanoTime();
                 double executionTimeMs = (endTime - startTime) / 1_000_000.0;
                 String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-                String jsonResult = String.format(
-                    Locale.US,
-                    "{\"x\": %.2f, \"y\": %.2f, \"r\": %.2f, \"hit\": %b, \"time\": \"%s\", \"exec_time\": \"%s\"}",
-                    x, y, r, hit, currentTime, executionTimeMs
-                );
-                history.add(jsonResult);
+                for (int i = 0; i < hits.size(); ++i) {
+                    String jsonResult = String.format(
+                        Locale.US,
+                        "{\"x\": %.2f, \"y\": %.2f, \"r\": %.2f, \"hit\": %b, \"time\": \"%s\", \"exec_time\": \"%s\"}",
+                        x, y, radii.get(i), hits.get(i), currentTime, executionTimeMs
+                    );
+                    history.add(jsonResult);
+                }
                 String jsonResponse = "[" + String.join(",", history) + "]";
 
                 sendResponse(200, "OK", jsonResponse);

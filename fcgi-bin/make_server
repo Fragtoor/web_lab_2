@@ -1,0 +1,10 @@
+javac -cp ../lib/fastcgi-script-library.jar Server.java
+mkdir build
+cd build
+jar xf ../../lib/fastcgi-script-library.jar
+cp ../Server.class .
+echo -e "Main-Class: Server\n" > MANIFEST.MF
+jar cfm server.jar MANIFEST.MF .
+mv server.jar ../
+cd ..
+rm -rf build
