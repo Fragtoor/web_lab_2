@@ -1,0 +1,4 @@
+httpd.pid
+error.log
+lib/
+mutex-dir/
