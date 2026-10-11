@@ -39,6 +39,7 @@ public class Server {
                 double x = 0;
                 double y = 0;
                 List<Double> radii = new ArrayList<>();
+                boolean isUpdateOnly = false; // Флаг для фонового опроса из других сессий
 
                 if (queryString != null) {
                     String[] pairs = queryString.split("&");
@@ -46,13 +47,14 @@ public class Server {
                         String[] keyValue = pair.split("=");
                         if (keyValue.length == 2) {
                             try {
+                                String key = keyValue[0];
                                 String value = java.net.URLDecoder.decode(keyValue[1], "UTF-8");
 
-                                if ("x".equals(keyValue[0])) {
+                                if ("x".equals(key)) {
                                     x = Double.parseDouble(value);
-                                } else if ("y".equals(keyValue[0])) {
+                                } else if ("y".equals(key)) {
                                     y = Double.parseDouble(value);
-                                } else if ("array".equals(keyValue[0])) {
+                                } else if ("array".equals(key)) {
                                     value = value.replace("[", "").replace("]", "").trim();
                                     if (!value.isEmpty()) {
                                         String[] parts = value.split(",");
@@ -60,30 +62,42 @@ public class Server {
                                             radii.add(Double.parseDouble(p.trim()));
                                         }
                                     }
+                                } else if ("action".equals(key) && "update".equals(value)) {  // Запрос пришел только за данными
+                                    isUpdateOnly = true;
                                 }
                             } catch (NumberFormatException ignored) {}
                         }
                     }
                 }
 
-                List<Boolean> hits = new ArrayList<>();
-                for (double r: radii) {
-                    hits.add(checkHit(x, y, r));
+                // Запрос на добавление точек
+                if (!isUpdateOnly && !radii.isEmpty()) {
+                    List<Boolean> hits = new ArrayList<>();
+                    for (double r : radii) {
+                        hits.add(checkHit(x, y, r));
+                    }
+
+                    long endTime = System.nanoTime();
+                    double executionTimeMs = (endTime - startTime) / 1_000_000.0;
+                    String currentTime = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+                    // синхронизирование добавления точек, чтобы не сломать список
+                    synchronized (history) {
+                        for (int i = 0; i < hits.size(); ++i) {
+                            String jsonResult = String.format(
+                                java.util.Locale.US,
+                                "{\"x\": %.2f, \"y\": %.2f, \"r\": %.2f, \"hit\": %b, \"time\": \"%s\", \"exec_time\": \"%s\"}",
+                                x, y, radii.get(i), hits.get(i), currentTime, executionTimeMs
+                            );
+                            history.add(jsonResult);
+                        }
+                    }
                 }
 
-                long endTime = System.nanoTime();
-                double executionTimeMs = (endTime - startTime) / 1_000_000.0;
-                String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-
-                for (int i = 0; i < hits.size(); ++i) {
-                    String jsonResult = String.format(
-                        Locale.US,
-                        "{\"x\": %.2f, \"y\": %.2f, \"r\": %.2f, \"hit\": %b, \"time\": \"%s\", \"exec_time\": \"%s\"}",
-                        x, y, radii.get(i), hits.get(i), currentTime, executionTimeMs
-                    );
-                    history.add(jsonResult);
+                String jsonResponse;
+                synchronized (history) {
+                    jsonResponse = "[" + String.join(",", history) + "]";
                 }
-                String jsonResponse = "[" + String.join(",", history) + "]";
 
                 sendResponse(200, "OK", jsonResponse);
 
@@ -94,9 +108,9 @@ public class Server {
     }
 
     private static boolean checkHit(double x, double y, double r) {
-        if (x >= 0 && y >= 0) return (x + 2 * y) <= r;
-        if (x <= 0 && y >= 0) return x >= -r && y <= r;
-        if (x <= 0 && y <= 0) return (x * x + y * y) <= (r / 2) * (r / 2);
+        if (x >= 0 && y >= 0) return (x * x + y * y) <= (r * r);
+        if (x <= 0 && y >= 0) return x >= -r / 2.0 && y <= r;
+        if (x <= 0 && y <= 0) return (x + y) >= -r / 2.0;
         return false;
     }
 
